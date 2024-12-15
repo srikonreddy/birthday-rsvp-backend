@@ -17,6 +17,11 @@ const DATA_FILE = './database.json';
 const readDatabase = () => JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
 const writeDatabase = (data) => fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
 
+// Root route to display a message
+app.get('/', (req, res) => {
+  res.send('Welcome to the RSVP API! Use /api/rsvp to submit RSVPs and /api/rsvps to view the list.');
+});
+
 // API to submit RSVP
 app.post('/api/rsvp', (req, res) => {
   const { name, email, attendance } = req.body;
