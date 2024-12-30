@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const fs = require('fs');
+require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -44,6 +45,12 @@ app.get('/api/rsvps', (req, res) => {
 });
 
 // Endpoint to validate user login
+
+const allowedUsers = process.env.ALLOWED_USERS.split(',').map((user) => {
+  const [firstName, lastName] = user.split(' ');
+  return { firstName, lastName };
+});
+
 app.post('/api/login', (req, res) => {
   const { firstName, lastName } = req.body;
 
@@ -51,22 +58,6 @@ app.post('/api/login', (req, res) => {
     return res.status(400).json({ message: 'Both first name and last name are required!' });
   }
 
-  // List of allowed users
-  const allowedUsers = [
-    { firstName: 'Sri', lastName: 'Konreddy' },
-    { firstName: 'Ramnik', lastName: 'Jhooti' },
-    { firstName: 'Niha', lastName: 'Gummakonda' },
-    { firstName: 'Yuktha', lastName: 'Gubbala' },
-    { firstName: 'Stacey', lastName: 'Pavdeja' },
-    { firstName: 'Lexi', lastName: 'Cooper-Dervan' },
-    { firstName: 'Aonghus', lastName: 'Mullen' },
-    { firstName: 'Pauline', lastName: 'Renevey' },
-    { firstName: 'Molly', lastName: 'Harris' },
-    { firstName: 'Isha', lastName: 'Pachnanda' },
-    { firstName: 'Charlotte', lastName: 'Harwood' }
-  ];
-
-  // Check if user exists in the allowed list
   const user = allowedUsers.find(
     (u) =>
       u.firstName.toLowerCase() === firstName.toLowerCase() &&
@@ -76,10 +67,9 @@ app.post('/api/login', (req, res) => {
   if (user) {
     res.status(200).json({ message: 'Login successful!' });
   } else {
-    res.status(401).json({ message: 'Invalid first name or last name, please check spacing :)' });
+    res.status(401).json({ message: 'Invalid first name or last name.' });
   }
 });
-
 
 // Start the server
 app.listen(PORT, () => {
